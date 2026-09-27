@@ -1,4 +1,6 @@
 import argparse
+import argparse
+from datetime import date
 
 from storage import load_tracker, save_tracker
 
@@ -9,12 +11,32 @@ def cmd_add(tracker, args):
     print(f"Added habit '{args.name}'.")
 
 
+def cmd_checkin(tracker, args):
+    habit = tracker.get_habit(args.name)
+    if args.date:
+        checkin_date = date.fromisoformat(args.date)
+    else:
+        checkin_date = date.today()
+
+    if checkin_date > date.today():
+        raise ValueError("Cannot check in for a future date.")
+
+    habit.check_in(checkin_date)
+    save_tracker(tracker)
+    print(f"Checked in '{args.name}' on {checkin_date.isoformat()}.")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Track daily habits and streaks.")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     add_parser = subparsers.add_parser("add", help="Add a new habit")
     add_parser.add_argument("name", help="Name of the habit")
+    checkin_parser = subparsers.add_parser("checkin", help="Check in a habit")
+    checkin_parser.add_argument("name", help="Name of the habit")
+    checkin_parser.add_argument(
+        "--date", help="Date to check in (YYYY-MM-DD), defaults to today"
+    )
 
     args = parser.parse_args()
     tracker = load_tracker()
@@ -22,9 +44,11 @@ def main():
     try:
         if args.command == "add":
             cmd_add(tracker, args)
+        elif args.command == "checkin":
+            cmd_checkin(tracker, args)
     except ValueError as error:
         print(f"Error: {error}")
 
 
 if __name__ == "__main__":
-    main() 
+    main()
