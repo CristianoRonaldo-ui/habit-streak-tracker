@@ -1,5 +1,4 @@
 import argparse
-import argparse
 from datetime import date
 
 from storage import load_tracker, save_tracker
