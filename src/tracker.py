@@ -60,3 +60,13 @@ class HabitTracker:
         if name not in self.habits:
             raise ValueError(f"Habit '{name}' not found.")
         return self.habits[name]
+
+    def get_stats(self, name, today=None):
+        """Return a summary of streak stats for one habit."""
+        habit = self.get_habit(name)
+        return {
+            "name": habit.name,
+            "total_checkins": len(habit.checkin_dates),
+            "current_streak": current_streak(habit.checkin_dates, today),
+            "longest_streak": longest_streak(habit.checkin_dates),
+        }
