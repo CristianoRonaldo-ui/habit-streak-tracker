@@ -34,6 +34,18 @@ def cmd_stats(tracker, args):
     print(f"Longest streak: {stats['longest_streak']} day(s)")
 
 
+def cmd_list(tracker, args):
+    if not tracker.habits:
+        print("No habits yet. Add one with: add <name>")
+        return
+
+    for name in sorted(tracker.habits):
+        stats = tracker.get_stats(name)
+        print(
+            f"{name}: {stats['current_streak']} day streak (best: {stats['longest_streak']})"
+        )
+
+
 def main():
     parser = argparse.ArgumentParser(description="Track daily habits and streaks.")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -43,11 +55,13 @@ def main():
     checkin_parser = subparsers.add_parser("checkin", help="Check in a habit")
     checkin_parser.add_argument("name", help="Name of the habit")
     checkin_parser.add_argument(
-        "--date", help="Date to check in (YYYY-MM-DD), defaults to today" )
-    
+        "--date", help="Date to check in (YYYY-MM-DD), defaults to today"
+    )
+
     stats_parser = subparsers.add_parser("stats", help="Show streak stats for a habit")
     stats_parser.add_argument("name", help="Name of the habit")
-    
+
+    subparsers.add_parser("list", help="List all habits with their current streaks")
 
     args = parser.parse_args()
     tracker = load_tracker()
@@ -59,6 +73,8 @@ def main():
             cmd_checkin(tracker, args)
         elif args.command == "stats":
             cmd_stats(tracker, args)
+        elif args.command == "list":
+            cmd_list(tracker, args)
     except ValueError as error:
         print(f"Error: {error}")
 
