@@ -23,6 +23,24 @@ def current_streak(checkin_dates, today=None):
     return streak
 
 
+def longest_streak(checkin_dates):
+    """Return the length of the longest run of consecutive check-in days."""
+    if not checkin_dates:
+        return 0
+
+    dates = sorted(set(checkin_dates))
+
+    longest = 1
+    run = 1
+    for i in range(1, len(dates)):
+        if dates[i] - dates[i - 1] == timedelta(days=1):
+            run += 1
+        else:
+            run = 1
+        longest = max(longest, run)
+    return longest
+
+
 class HabitTracker:
     """Manages a collection of habits (a tracker HAS many habits)."""
 
