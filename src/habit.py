@@ -2,7 +2,7 @@ from datetime import date
 
 
 class Habit:
-    """Represents a single habit and the days it has been checked in."""
+    """Represents a single habit and the days it has been checked in"""
 
     def __init__(self, name):
         self.name = name
